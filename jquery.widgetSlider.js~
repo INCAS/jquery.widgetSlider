@@ -54,6 +54,7 @@
         this.id        = $(this.header).attr('id');
         this.wrapperId = $(this.wrapper).attr('id');
         
+        
         // dont use those elements that dont have a header or content
         if($(this.header).data('hasWidget') || $(this.header).length == 0 || $(this.content).length == 0) {
           return;
@@ -65,9 +66,6 @@
         this._open     = null;
         // boolean to indicate the current state
         this._closed   = null;
-        
-        // save if an initial action is called, is set to false after initState() and useful for callbacks and events
-        this.isInitAction = true;
         
         // save reference to plugin in header
         this.header.data(pluginName, this);
@@ -132,23 +130,18 @@
         this.open(0);
         return;
       }
-     
       
       if(this.readState() === false) {
         this.close(0);
-        this.isInitAction = false;
         return;
       } else if(this.readState() === true) {
         this.open(0);
-        this.isInitAction = false;
         return;
       } else if($(this.wrapper).hasClass(this.options.classClosed)) {
         this.close(0);
-        this.isInitAction = false;
         return;
       } else if($(this.wrapper).hasClass(this.options.classOpen)) {
         this.open(0);
-        this.isInitAction = false;
         return;
       }
       
@@ -172,21 +165,17 @@
     /**
      * opens the widget
      */
-    widgetSlider.prototype.open = function(fx, triggerCallback) {
+    widgetSlider.prototype.open = function(fx) {
 
-      fx              = fx              == undefined ? true : fx;
-      triggerCallback = triggerCallback == undefined ? true : triggerCallback;
-      
+      fx = fx == undefined ? true : fx;
       var _plugin = this;
       this.content.slideDown(fx ? this.options.speed : 0, function() {
 
         $(_plugin.wrapper).addClass(_plugin.options.classOpen)
         $(_plugin.wrapper).removeClass(_plugin.options.classClosed)
-        
-        if(triggerCallback) {
-          _plugin.options.callback(_plugin);
-          _plugin.options.callbackOpen(_plugin);
-        }
+
+        _plugin.options.callback(_plugin);
+        _plugin.options.callbackOpen(_plugin);
 
         _plugin._open   = true;
         _plugin._closed = false;
@@ -201,21 +190,17 @@
     /**
      * closes the widget
      */
-    widgetSlider.prototype.close = function (fx, triggerCallback) {
+    widgetSlider.prototype.close = function (fx) {
       
-      fx              = fx              == undefined ? true : fx;
-      triggerCallback = triggerCallback == undefined ? true : triggerCallback;
-      
+      fx = fx == undefined ? true : fx;
       var _plugin = this;
       this.content.slideUp(fx ? this.options.speed : 0, function() {
         
         $(_plugin.wrapper).addClass(_plugin.options.classClosed)
         $(_plugin.wrapper).removeClass(_plugin.options.classOpen)
 
-        if(triggerCallback) {
-          _plugin.options.callback(_plugin);
-          _plugin.options.callbackClosed(_plugin);
-        }
+        _plugin.options.callback(_plugin);
+        _plugin.options.callbackClosed(_plugin);
 
         _plugin._open   = false;
         _plugin._closed = true;
